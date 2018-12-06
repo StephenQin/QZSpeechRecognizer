@@ -15,7 +15,7 @@
 #define QZLog(FORMAT, ...) nil
 #endif
 
-@interface QZSpeechRecognizer ()<SFSpeechRecognizerDelegate,AVAudioRecorderDelegate>
+@interface QZSpeechRecognizer ()<SFSpeechRecognizerDelegate,AVAudioRecorderDelegate,AVAudioPlayerDelegate>
 @property(nonatomic,strong)SFSpeechRecognizer * speechRecognizer;
 @property(nonatomic,strong)SFSpeechAudioBufferRecognitionRequest * recognitionRequest;
 @property(nonatomic,strong)SFSpeechRecognitionTask * recognitionTask;
@@ -122,7 +122,11 @@
     // 正在播放就返回
     if ([self.player isPlaying]) return;
     self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:filePath error:NULL];
-    [self.player play];
+    self.player.delegate = self;
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    if ([self.player prepareToPlay]) {
+        [self.player play];
+    }
 }
 - (void)stopPlaying {
     if (self.player.isPlaying) {
@@ -135,6 +139,11 @@
     if (self.recordFileUrl) {
         [fileManager removeItemAtURL:self.recordFileUrl error:NULL];
     }
+}
+
+#pragma mark ————— AVAudioPlayerDelegate —————
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 }
 
 #pragma mark - AVAudioRecorderDelegate
@@ -276,10 +285,12 @@
         }
     }];
 }
+
 #pragma mark ————— getter —————
 - (NSTimeInterval)currentTime {
     return self.recorder.currentTime;
 }
+
 #pragma mark ————— lazyLoad —————
 - (AVAudioEngine *)audioEngine {
     if (!_audioEngine) {

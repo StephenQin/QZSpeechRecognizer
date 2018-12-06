@@ -114,15 +114,14 @@
     [recorder prepareToRecord];
     return recorder;
 }
-- (void)playRecordingFile {
+- (void)playRecordingFileWithPath:(NSURL *)filePath {
     // 播放时停止录音
     if (self.recorder.isRecording) {
         [self.recorder stop];
     }
-    
     // 正在播放就返回
     if ([self.player isPlaying]) return;
-    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.recordFileUrl error:NULL];
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:filePath error:NULL];
     [self.player play];
 }
 - (void)stopPlaying {
@@ -194,8 +193,8 @@
                 break;
         }
     }];
-    if (self.setBlock) {
-        self.setBlock(self.canSpeach);
+    if (self.statusBlock) {
+        self.statusBlock(self.canSpeach);
     }
 }
 - (void)startRecognition {
@@ -213,8 +212,8 @@
             isFinal = [result isFinal];
             if (isFinal) {
                 NSString *resText = [[result bestTranscription] formattedString]; //语音转文本
-                if (self.begainBlock) {
-                    self.begainBlock(resText);
+                if (self.recognizeResultBlock) {
+                    self.recognizeResultBlock(resText);
                 }
             }
         }
@@ -225,8 +224,8 @@
             self.recognitionTask = nil;
             self.canSpeach = YES;
         }
-        if (self.setBlock) {
-            self.setBlock(self.canSpeach);
+        if (self.statusBlock) {
+            self.statusBlock(self.canSpeach);
         }
     }];
     AVAudioFormat *recordingFormat = [inputNode outputFormatForBus:0];
@@ -240,14 +239,14 @@
 }
 
 #pragma mark ————— SFSpeechRecognizerDelegate —————
-- (void)speechRecognizer:(SFSpeechRecognizer *)speechRecognizer availabilityDidChange:(BOOL)available{
+- (void)speechRecognizer:(SFSpeechRecognizer *)speechRecognizer availabilityDidChange:(BOOL)available {
     if (available) {
         self.canSpeach = YES;
     } else {
         self.canSpeach = NO;
     }
-    if (self.setBlock) {
-        self.setBlock(self.canSpeach);
+    if (self.statusBlock) {
+        self.statusBlock(self.canSpeach);
     }
 }
 - (void)dealloc {
@@ -271,13 +270,16 @@
         if (error) {
             QZLog(@"语音识别解析失败,%@",error);
         } else {
-            if (weakSelf.localRecBlock) {
-                weakSelf.localRecBlock(result.bestTranscription.formattedString);
+            if (weakSelf.localRecognizeBlock) {
+                weakSelf.localRecognizeBlock(result.bestTranscription.formattedString);
             }
         }
     }];
 }
-
+#pragma mark ————— getter —————
+- (NSTimeInterval)currentTime {
+    return self.recorder.currentTime;
+}
 #pragma mark ————— lazyLoad —————
 - (AVAudioEngine *)audioEngine {
     if (!_audioEngine) {

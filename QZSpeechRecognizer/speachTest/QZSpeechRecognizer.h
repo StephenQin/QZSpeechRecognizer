@@ -19,15 +19,17 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 @interface QZSpeechRecognizer : NSObject
 /** 初始化设置回调 */
-@property (nonatomic, copy) void(^setBlock)(BOOL canSpeach);
+@property (nonatomic, copy) void(^statusBlock)(BOOL canSpeach);
 /** 开始说话回调 */
-@property (nonatomic, copy) void(^begainBlock)(NSString *resaultText);
+@property (nonatomic, copy) void(^recognizeResultBlock)(NSString *resaultText);
 /** 本地语音识别回调 */
-@property (nonatomic, copy) void(^localRecBlock)(NSString *resaultText);
+@property (nonatomic, copy) void(^localRecognizeBlock)(NSString *resaultText);
 /** 更新图片的代理 */
 @property (nonatomic, weak) id<QZSpeechRecognizerDelegate> delegate;
 /** 录音对象 */
 @property (nonatomic, strong) AVAudioRecorder *recorder;
+/** 用来判断事件时间长度*/
+@property(nonatomic,assign) NSTimeInterval currentTime;
 /** 开始说话 */
 - (void)begainSpeach;
 /** 结束说话 */
@@ -37,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 结束录音 */
 - (void)stopRecord;
 /** 播放录音文件 */
-- (void)playRecordingFile;
+- (void)playRecordingFileWithPath:(NSURL *)filePath;
 /** 停止播放录音文件 */
 - (void)stopPlaying;
 /** 识别本地音频文件 参数传一个即可*/

@@ -17,6 +17,7 @@
 		F01B5B61218700DB00756691 /* speachTestUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B5B60218700DB00756691 /* speachTestUITests.m */; };
 		F01B5B7D21894AF100756691 /* FFMacVoiceView.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B5B7C21894AF100756691 /* FFMacVoiceView.m */; };
 		F063952A21B8EA3F008D373E /* QZSpeechRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F063952921B8EA3F008D373E /* QZSpeechRecognizer.m */; };
+		F063952C21B8F550008D373E /* 录音.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F063952B21B8F550008D373E /* 录音.m4a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		F01B5B7C21894AF100756691 /* FFMacVoiceView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFMacVoiceView.m; sourceTree = "<group>"; };
 		F063952821B8EA3F008D373E /* QZSpeechRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QZSpeechRecognizer.h; sourceTree = "<group>"; };
 		F063952921B8EA3F008D373E /* QZSpeechRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QZSpeechRecognizer.m; sourceTree = "<group>"; };
+		F063952B21B8F550008D373E /* 录音.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "录音.m4a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,7 @@
 				F01B5B47218700DB00756691 /* LaunchScreen.storyboard */,
 				F01B5B4A218700DB00756691 /* Info.plist */,
 				F01B5B4B218700DB00756691 /* main.m */,
+				F063952B21B8F550008D373E /* 录音.m4a */,
 			);
 			path = speachTest;
 			sourceTree = "<group>";
@@ -247,6 +250,7 @@
 			files = (
 				F01B5B49218700DB00756691 /* LaunchScreen.storyboard in Resources */,
 				F01B5B46218700DB00756691 /* Assets.xcassets in Resources */,
+				F063952C21B8F550008D373E /* 录音.m4a in Resources */,
 				F01B5B44218700D800756691 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

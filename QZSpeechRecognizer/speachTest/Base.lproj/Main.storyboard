@@ -40,15 +40,33 @@
                                     <action selector="stopSpeach:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hxc-be-4Nk"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7TL-ml-04z">
+                                <rect key="frame" x="141.5" y="424" width="92" height="30"/>
+                                <state key="normal" title="识别本地语音"/>
+                                <connections>
+                                    <action selector="localFileRecognize:" destination="BYZ-38-t0r" eventType="touchUpInside" id="JTP-HT-NSs"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jBX-zO-xgh">
+                                <rect key="frame" x="126" y="479" width="123" height="30"/>
+                                <state key="normal" title="播放本地语音文件"/>
+                                <connections>
+                                    <action selector="playLocalFile:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mxm-MC-yIG"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.61099801936619713" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="7J0-A9-lee" firstAttribute="centerX" secondItem="P71-wf-QKn" secondAttribute="centerX" id="4rc-fQ-2bP"/>
+                            <constraint firstItem="jBX-zO-xgh" firstAttribute="centerX" secondItem="7TL-ml-04z" secondAttribute="centerX" id="9lG-3b-7pF"/>
+                            <constraint firstItem="jBX-zO-xgh" firstAttribute="top" secondItem="7TL-ml-04z" secondAttribute="bottom" constant="25" id="LLS-Zj-SVL"/>
+                            <constraint firstItem="7TL-ml-04z" firstAttribute="top" secondItem="gOw-Qr-Kve" secondAttribute="bottom" constant="25" id="RBN-L6-NzG"/>
                             <constraint firstItem="P71-wf-QKn" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VSE-JN-o2K"/>
                             <constraint firstItem="P71-wf-QKn" firstAttribute="top" secondItem="7J0-A9-lee" secondAttribute="bottom" constant="22" id="YZs-jH-3vj"/>
                             <constraint firstItem="gOw-Qr-Kve" firstAttribute="top" secondItem="P71-wf-QKn" secondAttribute="bottom" constant="25" id="myW-Ps-moW"/>
                             <constraint firstItem="gOw-Qr-Kve" firstAttribute="centerX" secondItem="P71-wf-QKn" secondAttribute="centerX" id="rHN-GE-RY0"/>
                             <constraint firstItem="P71-wf-QKn" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="tRc-IM-cG9"/>
+                            <constraint firstItem="7TL-ml-04z" firstAttribute="centerX" secondItem="gOw-Qr-Kve" secondAttribute="centerX" id="wIK-dN-BaZ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>

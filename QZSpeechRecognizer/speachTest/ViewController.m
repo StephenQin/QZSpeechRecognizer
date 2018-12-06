@@ -31,6 +31,15 @@
     NSLog(@"imgname:%@",imageName);
     self.macView.imgView.image = [UIImage imageNamed:imageName];
 }
+- (IBAction)playLocalFile:(UIButton *)sender {
+    NSLog(@"点击播放本地语音文件");
+    NSURL *fileUrl = [[NSBundle mainBundle] URLForResource:@"录音.m4a" withExtension:nil];
+    [self.mySpeach playRecordingFileWithPath:fileUrl];
+}
+- (IBAction)localFileRecognize:(UIButton *)sender {
+    NSLog(@"识别本地语音文件");
+    [self.mySpeach recognizeLocalAudioFileWithFileName:@"录音.m4a" orWithFileUrl:nil];
+}
 - (IBAction)BtnClick:(UIButton *)sender {
     self.macView.hidden = NO;
     [self.mySpeach begainSpeach];
@@ -39,7 +48,7 @@
 }
 - (IBAction)stopSpeach:(UIButton *)sender {
     
-    double currentTime = self.mySpeach.recorder.currentTime;
+    NSTimeInterval currentTime = self.mySpeach.currentTime;
     NSLog(@".......%lf", currentTime);
     if (currentTime < 0.3) {
         
@@ -67,10 +76,6 @@
                 [self.recordingBtn setTitle:@"开始录制" forState:UIControlStateNormal];
             });
         });
-        kWeakSelf(self);
-        self.mySpeach.begainBlock = ^(NSString * _Nonnull resaultText) {
-            weakself.inPutTextField.text = resaultText;
-        };
     }
 }
 
@@ -86,8 +91,14 @@
     self.mySpeach = [QZSpeechRecognizer new];
     self.mySpeach.delegate = self;
     kWeakSelf(self);
-    self.mySpeach.setBlock = ^(BOOL canSpeach) {
+    self.mySpeach.statusBlock = ^(BOOL canSpeach) {
         weakself.recordingBtn.enabled = canSpeach;
+    };
+    self.mySpeach.localRecognizeBlock = ^(NSString * _Nonnull resaultText) {
+        weakself.inPutTextField.text = resaultText;
+    };
+    self.mySpeach.recognizeResultBlock = ^(NSString * _Nonnull resaultText) {
+        weakself.inPutTextField.text = resaultText;
     };
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {

@@ -4,7 +4,13 @@
 //
 //  Created by Stephen Hu on 2018/10/29.
 //  Copyright © 2018 Stephen Hu. All rights reserved.
-//
+/* 若激发语音的button放在界面的低端会出现TouchDown事件延迟 添加以下代码解决
+ - (void)viewDidAppear:(BOOL)animated{
+ [super viewDidAppear:animated];
+ for (UIGestureRecognizer *gesture in self.view.window.gestureRecognizers) {
+ gesture.delaysTouchesBegan = NO;// 解决TouchDown事件延迟
+ }}
+ */
 
 #import "ViewController.h"
 #import "QZSpeechRecognizer.h"

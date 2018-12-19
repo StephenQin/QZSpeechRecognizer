@@ -219,11 +219,9 @@
         bool isFinal = NO;
         if (result) {
             isFinal = [result isFinal];
-            if (isFinal) {
-                NSString *resText = [[result bestTranscription] formattedString]; //语音转文本
-                if (self.recognizeResultBlock) {
-                    self.recognizeResultBlock(resText);
-                }
+            NSString *resText = [[result bestTranscription] formattedString]; //语音转文本
+            if (self.recognizeResultBlock) {
+                self.recognizeResultBlock(resText, isFinal);
             }
         }
         if (error || isFinal) {

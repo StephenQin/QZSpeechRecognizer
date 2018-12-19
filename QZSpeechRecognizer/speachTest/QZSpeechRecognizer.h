@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 初始化设置回调 */
 @property (nonatomic, copy) void(^statusBlock)(BOOL canSpeach);
 /** 开始说话回调 */
-@property (nonatomic, copy) void(^recognizeResultBlock)(NSString *resaultText);
+@property (nonatomic, copy) void(^recognizeResultBlock)(NSString *resaultText,BOOL isFinal);
 /** 本地语音识别回调 */
 @property (nonatomic, copy) void(^localRecognizeBlock)(NSString *resaultText);
 /** 更新图片的代理 */

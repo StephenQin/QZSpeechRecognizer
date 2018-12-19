@@ -97,7 +97,7 @@
     self.mySpeach.localRecognizeBlock = ^(NSString * _Nonnull resaultText) {
         weakself.inPutTextField.text = resaultText;
     };
-    self.mySpeach.recognizeResultBlock = ^(NSString * _Nonnull resaultText) {
+    self.mySpeach.recognizeResultBlock = ^(NSString * _Nonnull resaultText,BOOL isFinal) {
         weakself.inPutTextField.text = resaultText;
     };
 }

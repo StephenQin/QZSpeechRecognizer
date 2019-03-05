@@ -88,13 +88,12 @@
     } else {
         [session setActive:YES error:nil];
     }
-    // 1.获取沙盒地址
+    // 获取沙盒地址
     NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
     NSString *filePath = [path stringByAppendingPathComponent:LVRecordFielName];
     self.recordFileUrl = [NSURL fileURLWithPath:filePath];
     QZLog(@"输出文件地址。。。。%@", filePath);
-    
-    // 3.设置录音的一些参数
+    // 设置录音的一些参数
     NSMutableDictionary *setting = [NSMutableDictionary dictionary];
     // 音频格式
     setting[AVFormatIDKey] = @(kAudioFormatAppleIMA4);
@@ -170,8 +169,8 @@
     self = [super init];
     if (self) {
         [self setupSpeach];
-        self.recorder = [self setRecorder];
         [self checkAudioStatus];
+        self.recorder = [self setRecorder];
         NSTimer *timer = [NSTimer timerWithTimeInterval:0.2 target:self selector:@selector(updateImage) userInfo:nil repeats:YES];
         [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
         self.timer = timer;
@@ -251,14 +250,28 @@
 
 #pragma mark ————— 麦克风权限 —————
 - (void)checkAudioStatus {
-    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
-    switch (authStatus) {
-        case AVAuthorizationStatusNotDetermined:
-        case AVAuthorizationStatusRestricted:
-        case AVAuthorizationStatusDenied:
+    AVAudioSessionRecordPermission permissionStatus = [[AVAudioSession sharedInstance] recordPermission];
+    switch (permissionStatus) {
+        case AVAudioSessionRecordPermissionUndetermined:
+        {
+            QZLog(@"第一次调用，是否允许访问麦克风");
+            [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+                if (granted) {
+                    QZLog(@"允许访问麦克风");
+                    self.canUseMacphone = YES;
+                } else {
+                    QZLog(@"拒绝访问麦克风");
+                    self.canUseMacphone = NO;
+                }
+            }];
+            break;
+        }
+        case AVAudioSessionRecordPermissionDenied:
+            QZLog(@"已经拒绝访问麦克风");
             self.canUseMacphone = NO;
             break;
-        case AVAuthorizationStatusAuthorized:
+        case AVAudioSessionRecordPermissionGranted:
+            QZLog(@"已经允许访问麦克风");
             self.canUseMacphone = YES;
             break;
         default:

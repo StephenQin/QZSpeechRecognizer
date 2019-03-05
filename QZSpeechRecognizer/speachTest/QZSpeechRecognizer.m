@@ -20,8 +20,6 @@
 @property(nonatomic,strong)SFSpeechAudioBufferRecognitionRequest * recognitionRequest;
 @property(nonatomic,strong)SFSpeechRecognitionTask * recognitionTask;
 @property(nonatomic,strong)AVAudioEngine * audioEngine;
-/** 标记能不能说话 */
-@property(nonatomic, assign) BOOL canSpeach;
 /** 定时器 */
 @property (nonatomic, strong) NSTimer *timer;
 /** 录音文件地址 */
@@ -32,6 +30,7 @@
 
 @implementation QZSpeechRecognizer
 
+#pragma mark ————— 功能方法 —————
 - (void)stopRecord {
     if (self.recorder.isRecording) {
         [self.recorder stop];
@@ -172,6 +171,7 @@
     if (self) {
         [self setupSpeach];
         self.recorder = [self setRecorder];
+        [self checkAudioStatus];
         NSTimer *timer = [NSTimer timerWithTimeInterval:0.2 target:self selector:@selector(updateImage) userInfo:nil repeats:YES];
         [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
         self.timer = timer;
@@ -184,18 +184,22 @@
         switch (status) {
             case SFSpeechRecognizerAuthorizationStatusAuthorized:
                 self.canSpeach = true;
+                self.authorizationStatus = QZSpeechRecognizerAuthorizationStatusAuthorized;
                 QZLog(@"可以语音识别");
                 break;
             case SFSpeechRecognizerAuthorizationStatusDenied:
                 self.canSpeach = false;
+                self.authorizationStatus = QZSpeechRecognizerAuthorizationStatusDenied;
                 QZLog(@"用户被拒绝访问语音识别");
                 break;
             case SFSpeechRecognizerAuthorizationStatusRestricted:
                 self.canSpeach = false;
+                self.authorizationStatus = QZSpeechRecognizerAuthorizationStatusRestricted;
                 QZLog(@"不能在该设备上进行语音识别");
                 break;
             case SFSpeechRecognizerAuthorizationStatusNotDetermined:
                 self.canSpeach = false;
+                self.authorizationStatus = QZSpeechRecognizerAuthorizationStatusNotDetermined;
                 QZLog(@"没有授权语音识别");
                 break;
             default:
@@ -243,6 +247,23 @@
     [self.audioEngine prepare];
     bool audioEngineBool = [self.audioEngine startAndReturnError:nil];
     QZLog(@"%d",audioEngineBool);
+}
+
+#pragma mark ————— 麦克风权限 —————
+- (void)checkAudioStatus {
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    switch (authStatus) {
+        case AVAuthorizationStatusNotDetermined:
+        case AVAuthorizationStatusRestricted:
+        case AVAuthorizationStatusDenied:
+            self.canUseMacphone = NO;
+            break;
+        case AVAuthorizationStatusAuthorized:
+            self.canUseMacphone = YES;
+            break;
+        default:
+            break;
+    }
 }
 
 #pragma mark ————— SFSpeechRecognizerDelegate —————

@@ -11,6 +11,12 @@
 #import <Speech/Speech.h>
 
 NS_ASSUME_NONNULL_BEGIN
+typedef NS_ENUM(NSInteger, QZSpeechRecognizerAuthorizationStatus) {
+    QZSpeechRecognizerAuthorizationStatusNotDetermined,  // 没有授权
+    QZSpeechRecognizerAuthorizationStatusDenied,         // 用户拒绝
+    QZSpeechRecognizerAuthorizationStatusRestricted,     // 不能在此设备上使用
+    QZSpeechRecognizerAuthorizationStatusAuthorized,     // 已授权可以使用
+};
 @class QZSpeechRecognizer;
 @protocol QZSpeechRecognizerDelegate <NSObject>
 @optional
@@ -30,6 +36,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) AVAudioRecorder *recorder;
 /** 用来判断事件时间长度*/
 @property(nonatomic,assign) NSTimeInterval currentTime;
+/** 语音识别权限*/
+@property (nonatomic, assign) QZSpeechRecognizerAuthorizationStatus authorizationStatus;
+/** 标记能不能语音识别 */
+@property(nonatomic, assign) BOOL canSpeach;
+/** 标记麦克风权限是否开启 */
+@property(nonatomic, assign) BOOL canUseMacphone;
+
 /** 开始说话 */
 - (void)begainSpeach;
 /** 结束说话 */

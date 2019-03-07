@@ -23,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *inPutTextField;
 @property (nonatomic, strong) QZSpeechRecognizer *mySpeach;
 @property (nonatomic, weak) FFMacVoiceView *macView;
+@property (nonatomic, assign) NSInteger checkNum;
 @end
 
 @implementation ViewController
@@ -44,38 +45,47 @@
     [self.mySpeach recognizeLocalAudioFileWithFileName:@"录音.m4a" orWithFileUrl:nil];
 }
 - (IBAction)BtnClick:(UIButton *)sender {
-    if (self.mySpeach.canUseMacphone) {
-        if (self.mySpeach.canSpeach) {
-            self.macView.hidden = NO;
-            [self.mySpeach begainSpeach];
-            [self.recordingBtn setTitle:@"停止说话" forState:UIControlStateNormal];
-            [self.mySpeach startRecord];
-        } else {
-            switch (self.mySpeach.authorizationStatus) {
-                case QZSpeechRecognizerAuthorizationStatusNotDetermined:
-                case QZSpeechRecognizerAuthorizationStatusDenied:
-                    [self alertWithMessage:@"请在iphone的设置中 语音识别Demo 内开启‘语音识别’权限"];
-                    break;
-                case QZSpeechRecognizerAuthorizationStatusRestricted:
-                    [self alertWithMessage:@"该设备不能使用麦克风进行语音识别"];
-                default:
-                    break;
+    NSInteger i = self.checkNum;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (i == self.checkNum) {
+            NSLog(@"可以执行");
+            if (self.mySpeach.canUseMacphone) {
+                if (self.mySpeach.canSpeach) {
+                    self.macView.hidden = NO;
+                    [self.mySpeach begainSpeach];
+                    [self.recordingBtn setTitle:@"停止说话" forState:UIControlStateNormal];
+                    [self.mySpeach startRecord];
+                } else {
+                    switch (self.mySpeach.authorizationStatus) {
+                        case QZSpeechRecognizerAuthorizationStatusNotDetermined:
+                        case QZSpeechRecognizerAuthorizationStatusDenied:
+                            [self alertWithMessage:@"请在iphone的设置中 语音识别Demo 内开启‘语音识别’权限"];
+                            break;
+                        case QZSpeechRecognizerAuthorizationStatusRestricted:
+                            [self alertWithMessage:@"该设备不能使用麦克风进行语音识别"];
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                [self alertWithMessage:@"请在iphone的设置中 语音识别Demo 内开启‘麦克风’权限"];
             }
+        } else {
+            NSLog(@"不可以执行");
         }
-    } else {
-        [self alertWithMessage:@"请在iphone的设置中 语音识别Demo 内开启‘麦克风’权限"];
-    }
+    });
 }
 - (IBAction)stopSpeach:(UIButton *)sender {
+    _checkNum++;
     NSTimeInterval currentTime = self.mySpeach.currentTime;
     NSLog(@".......%lf", currentTime);
-    if (currentTime < 0.3) {
-        self.macView.imgView.image = [UIImage imageNamed:@"mic_0"];
+    if (currentTime < 0.5 && currentTime >= 0.1) {
+        self.macView.imgView.image = [UIImage imageNamed:@"shot"];
         [self alertWithMessage:@"说话时间太短"];
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             [self.mySpeach endSpeach];
             [self.mySpeach stopRecord];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.macView.hidden = YES;
                 self.recordingBtn.enabled = YES;
                 [self.recordingBtn setTitle:@"点我说话" forState:UIControlStateNormal];
@@ -108,6 +118,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _checkNum = 0;
     self.mySpeach = [QZSpeechRecognizer new];
     self.mySpeach.delegate = self;
     kWeakSelf(self);

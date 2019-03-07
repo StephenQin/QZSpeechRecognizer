@@ -49,7 +49,6 @@
     }
 }
 - (void)updateImage {
-    
     [self.recorder updateMeters];
     double lowPassResults = pow(2, (0.05 * [self.recorder peakPowerForChannel:0]));
     float result  = 7 * (float)lowPassResults;
@@ -72,7 +71,6 @@
     } else if (result > 6) {
         no = 8;
     }
-    
     if ([self.delegate respondsToSelector:@selector(speach:didstartSpeach:)]) {
         [self.delegate speach:self didstartSpeach: no];
     }
@@ -105,7 +103,6 @@
     setting[AVLinearPCMBitDepthKey] = @(8);
     //录音的质量
     setting[AVEncoderAudioQualityKey] = [NSNumber numberWithInt:AVAudioQualityHigh];
-    
     AVAudioRecorder *recorder = [[AVAudioRecorder alloc] initWithURL:self.recordFileUrl settings:setting error:NULL];
     recorder.delegate = self;
     recorder.meteringEnabled = YES;
@@ -132,7 +129,6 @@
     }
 }
 - (void)destructionRecordingFile {
-    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (self.recordFileUrl) {
         [fileManager removeItemAtURL:self.recordFileUrl error:NULL];
@@ -214,7 +210,6 @@
         [self.recognitionTask cancel];
         self.recognitionTask = nil;
     }
-    self.recognitionRequest = [[SFSpeechAudioBufferRecognitionRequest alloc] init];
     AVAudioInputNode *inputNode = self.audioEngine.inputNode;
     self.recognitionRequest.shouldReportPartialResults = YES;
     //开始识别任务
@@ -230,7 +225,6 @@
         if (error || isFinal) {
             [self.audioEngine stop];
             [inputNode removeTapOnBus:0];
-            self.recognitionRequest = nil;
             self.recognitionTask = nil;
             self.canSpeach = YES;
         }
@@ -305,7 +299,8 @@
         if (!url) return;
     } else if (fileUrl) { url = fileUrl;}
     SFSpeechURLRecognitionRequest *request = [[SFSpeechURLRecognitionRequest alloc] initWithURL:url];
-    request.shouldReportPartialResults = NO;
+    // 是否返中间结果
+    request.shouldReportPartialResults = NO; 
     __weak typeof(self) weakSelf = self;
     [localRecognizer recognitionTaskWithRequest:request resultHandler:^(SFSpeechRecognitionResult * _Nullable result, NSError * _Nullable error) {
         if (error) {
@@ -337,5 +332,12 @@
         _speechRecognizer.delegate = self;
     }
     return _speechRecognizer;
+}
+- (SFSpeechAudioBufferRecognitionRequest *)recognitionRequest {
+    if (!_recognitionRequest) {
+        SFSpeechAudioBufferRecognitionRequest *recognitionRequest = [[SFSpeechAudioBufferRecognitionRequest alloc] init];
+        _recognitionRequest = recognitionRequest;
+    }
+    return _recognitionRequest;
 }
 @end
